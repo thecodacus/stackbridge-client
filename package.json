@@ -1,0 +1,29 @@
+{
+  "name": "stackbridge-client",
+  "version": "1.0.4",
+  "description": "StackBridge client for StackBridge server",
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index",
+  "scripts": {
+    "build": "rm -rf ./dist/* && tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thecodacus/backbone-client.git"
+  },
+  "author": "Anirban Kar thecodacus@gmail.com",
+  "license": "SEE LICENSE IN https://github.com/thecodacus/backbone-client/LICENSE",
+  "bugs": {
+    "url": "https://github.com/thecodacus/backbone-client/issues"
+  },
+  "homepage": "https://github.com/thecodacus/backbone-client#readme",
+  "peerDependencies": {
+    "rxjs": "^6.4.0",
+    "socket.io-client": "^2.2.0"
+  },
+  "devDependencies": {
+    "@types/socket.io-client": "^1.4.32",
+    "tslint": "^5.13.0",
+    "typescript": "^3.3.3333"
+  }
+}
