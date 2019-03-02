@@ -1,4 +1,5 @@
-import { SBStoreConfig, SBConnectInitConfig } from ".";
+import { SBConnectInitConfig } from "./StackBridgeConnecter";
+import { SBStoreConfig } from "./StackBridgeStore";
 import { Observable } from "rxjs";
 export interface StackBridgeConfig {
     ServerOption: SBConnectInitConfig;

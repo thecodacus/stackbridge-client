@@ -17,6 +17,8 @@ export class StackBridgeStore{
   config: SBStoreConfig;
   constructor(config:SBStoreConfig){
     this.config=config;
+    this.indexes={};
+    this.store={};
     this.storeStream=new BehaviorSubject<{[id:string]:{[id:string]:any}}>({});
   }
   loadStore(data:any[]){

@@ -1,5 +1,5 @@
-import { StackBridgeStore } from ".";
-import { StackBridgeConnecter } from ".";
+import { StackBridgeConnecter } from "./StackBridgeConnecter";
+import { StackBridgeStore } from "./StackBridgeStore";
 import { Subject } from "rxjs";
 import { switchMap, multicast } from "rxjs/operators";
 var StackBridge = /** @class */ (function () {
@@ -38,7 +38,8 @@ var StackBridge = /** @class */ (function () {
         return this.stores[storeName].getByIndex(index, value);
     };
     StackBridge.prototype.InsertInStore = function (storeName, value) {
-        //this.
+        this.connection.toPromise().then(function (conn) {
+        });
     };
     StackBridge.prototype.updateInStore = function (storeName, value) {
     };
