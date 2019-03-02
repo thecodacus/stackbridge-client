@@ -1,4 +1,4 @@
-# Welcome to Backbone !
+# Welcome to StackBridge !
 [![Build Status](https://travis-ci.com/thecodacus/backbone-client.svg?branch=master)](https://travis-ci.com/thecodacus/backbone-client)
 ![GitHub](https://img.shields.io/github/license/thecodacus/backbone-client.svg?style=popout)
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/thecodacus/backbone-client.svg?style=popout)
