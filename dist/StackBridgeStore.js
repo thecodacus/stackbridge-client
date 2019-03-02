@@ -8,6 +8,7 @@ var StackBridgeStore = /** @class */ (function () {
         this.config = config;
         this.indexes = {};
         this.store = {};
+        this.indexes['id'] = this.store;
         this.storeStream = new BehaviorSubject({});
     }
     StackBridgeStore.prototype.loadStore = function (data) {

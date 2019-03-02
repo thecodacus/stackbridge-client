@@ -20,7 +20,7 @@ export class StackBridgeStore{
     this.indexes={};
     this.store={};
     this.indexes['id']=this.store;
-    this.storeStream=new BehaviorSubject<{[id:string]:{[id:string]:any}}>({});
+    this.storeStream=new BehaviorSubject<{[id:string]:{[id:string]:any}}>(this.indexes);
   }
   loadStore(data:any[]){
     this.store={}
