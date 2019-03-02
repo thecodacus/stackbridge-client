@@ -10,7 +10,7 @@ StackBridge provide realtime database integration,
 ## Installing
 Import StackBridge client
 ```
-npm install stackbridge-client
+npm i @codacus/stackbridge-client
 ```
 ## Authors
 *  **[Anirban Kar](http://thecodacus.com/author/admin/)**
