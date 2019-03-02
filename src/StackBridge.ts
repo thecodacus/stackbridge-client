@@ -15,8 +15,7 @@ export class StackBridge{
   constructor(config:StackBridgeConfig){
     this.config=config;
     this.connector=new StackBridgeConnecter();
-    this.connection=this.connector.connect(this.config.ServerOption)
-      .pipe(multicast(new Subject()));
+    this.connection=this.connector.connect(this.config.ServerOption);
     this.config.StoreOptions.forEach(options=>{
       this.stores[options.name]=new StackBridgeStore(options);
       this.connection.pipe(
@@ -39,7 +38,6 @@ export class StackBridge{
         switchMap(channel=>channel.cursor)
       ).subscribe(data=>this.stores[options.name].performChanges(data))
     });
-    (this.connection as ConnectableObservable<SBConnection>).connect()
   }
   getAllfromStore(storeName:string):Observable<any[]>{
     return this.stores[storeName].getAll();
