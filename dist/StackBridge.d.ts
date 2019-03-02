@@ -13,4 +13,6 @@ export declare class StackBridge {
     getAllfromStore(storeName: string): Observable<any[]>;
     getFromStore(storeName: string, id: string): Observable<any>;
     getFromStoreByIndex(storeName: string, index: string, value: any): Observable<any>;
+    InsertInStore(storeName: string, value: any): void;
+    updateInStore(storeName: string, value: any): void;
 }

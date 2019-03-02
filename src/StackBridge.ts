@@ -50,7 +50,9 @@ export class StackBridge{
     return this.stores[storeName].getByIndex(index,value);
   }
   InsertInStore(storeName:string,value:any){
-    //this.
+    this.connection.toPromise().then(conn=>{
+
+    })
   }
   updateInStore(storeName:string,value:any){
 

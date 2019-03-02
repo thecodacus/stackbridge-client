@@ -37,6 +37,11 @@ var StackBridge = /** @class */ (function () {
     StackBridge.prototype.getFromStoreByIndex = function (storeName, index, value) {
         return this.stores[storeName].getByIndex(index, value);
     };
+    StackBridge.prototype.InsertInStore = function (storeName, value) {
+        //this.
+    };
+    StackBridge.prototype.updateInStore = function (storeName, value) {
+    };
     return StackBridge;
 }());
 export { StackBridge };
