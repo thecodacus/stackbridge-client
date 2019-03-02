@@ -6,7 +6,7 @@
 
 StackBridge provide realtime database integration,
 ## Prerequisites
-- StackBridge server should up and running . Get Backbone server [here](https://github.com/thecodacus/backbone-server)
+- StackBridge server should up and running . Get StackBridge server [here](#)
 ## Installing
 Import StackBridge client
 ```
