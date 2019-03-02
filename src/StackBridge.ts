@@ -1,5 +1,6 @@
-import { SBStoreConfig, SBConnectInitConfig, StackBridgeStore } from ".";
-import {StackBridgeConnecter,SBConnection} from "."
+import {SBConnectInitConfig,StackBridgeConnecter } from "./StackBridgeConnecter";
+import {StackBridgeStore,SBStoreConfig} from "./StackBridgeStore"
+import {SBConnection} from "./SBConnection"
 import { Observable, Subject, ConnectableObservable } from "rxjs";
 import { switchMap, multicast } from "rxjs/operators";
 export interface StackBridgeConfig{

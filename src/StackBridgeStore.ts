@@ -17,6 +17,7 @@ export class StackBridgeStore{
   config: SBStoreConfig;
   constructor(config:SBStoreConfig){
     this.config=config;
+    this.storeStream=new BehaviorSubject<{[id:string]:{[id:string]:any}}>({});
   }
   loadStore(data:any[]){
     this.store={}
@@ -60,7 +61,9 @@ export class StackBridgeStore{
   }
   reIndex(){
     this.indexes={}
+    this.indexes['id']={}
     this.config.indexes.forEach(index=>{
+      this.indexes[index]={}
       Object.keys(this.store).map(key=>{
         let idx=this.store[key][index]
         if(idx)this.indexes[index][idx]=this.store[key]
