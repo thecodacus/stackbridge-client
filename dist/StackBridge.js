@@ -1,15 +1,13 @@
 import { StackBridgeConnecter } from "./StackBridgeConnecter";
 import { StackBridgeStore } from "./StackBridgeStore";
-import { Subject } from "rxjs";
-import { switchMap, multicast } from "rxjs/operators";
+import { switchMap } from "rxjs/operators";
 var StackBridge = /** @class */ (function () {
     function StackBridge(config) {
         var _this = this;
         this.stores = {};
         this.config = config;
         this.connector = new StackBridgeConnecter();
-        this.connection = this.connector.connect(this.config.ServerOption)
-            .pipe(multicast(new Subject()));
+        this.connection = this.connector.connect(this.config.ServerOption);
         this.config.StoreOptions.forEach(function (options) {
             _this.stores[options.name] = new StackBridgeStore(options);
             _this.connection.pipe(switchMap(function (conn) {
@@ -26,7 +24,6 @@ var StackBridge = /** @class */ (function () {
                     .run(conn);
             }), switchMap(function (channel) { return channel.cursor; })).subscribe(function (data) { return _this.stores[options.name].performChanges(data); });
         });
-        this.connection.connect();
     }
     StackBridge.prototype.getAllfromStore = function (storeName) {
         return this.stores[storeName].getAll();
