@@ -1,20 +1,16 @@
-/// <reference types="socket.io-client" />
-import { Observable } from 'rxjs';
-import { SBConnection } from './SBConnection';
-import { RequestTranslator } from './RequestTranslator';
-export interface sbInitConfig {
-    hostname: string;
-    port: number;
-    namespace: string;
-    AuthToken?: string;
+import { SBStoreConfig, SBConnectInitConfig } from ".";
+import { Observable } from "rxjs";
+export interface StackBridgeConfig {
+    ServerOption: SBConnectInitConfig;
+    StoreOptions: SBStoreConfig[];
 }
 export declare class StackBridge {
+    private stores;
     private config;
-    socket: SocketIOClient.Socket;
-    token: string;
-    conn: Observable<SBConnection>;
-    constructor();
-    connect(config: sbInitConfig): Observable<SBConnection>;
-    setToken(token: any): void;
-    createRequest(): RequestTranslator;
+    private connector;
+    private connection;
+    constructor(config: StackBridgeConfig);
+    getAllfromStore(storeName: string): Observable<any[]>;
+    getFromStore(storeName: string, id: string): Observable<any>;
+    getFromStoreByIndex(storeName: string, index: string, value: any): Observable<any>;
 }

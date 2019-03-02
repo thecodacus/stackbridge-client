@@ -1,54 +1,58 @@
-import * as io from 'socket.io-client';
-import { Observable, Subject ,race} from 'rxjs';
-import { SBConnection, SBChannel } from './SBConnection';
-import { RequestTranslator } from './RequestTranslator';
-import { switchMap, map, merge, concat, tap, expand, share } from 'rxjs/operators';
-
-export interface sbInitConfig{
-  hostname:string,
-  port:number,
-  namespace:string,
-  AuthToken?:string
+import { SBStoreConfig, SBConnectInitConfig, StackBridgeStore } from ".";
+import {StackBridgeConnecter,SBConnection} from "."
+import { Observable, Subject, ConnectableObservable } from "rxjs";
+import { switchMap, multicast } from "rxjs/operators";
+export interface StackBridgeConfig{
+  ServerOption:SBConnectInitConfig,
+  StoreOptions:SBStoreConfig[]
 }
-
 export class StackBridge{
-  private config:sbInitConfig;
-  socket: SocketIOClient.Socket;
-  token:string;
-  conn:Observable<SBConnection>;
-  constructor(){}
-  connect(config:sbInitConfig):Observable<SBConnection>{
+  private stores:{[id:string]:StackBridgeStore}={};
+  private config:StackBridgeConfig;
+  private connector:StackBridgeConnecter;
+  private connection:Observable<SBConnection>
+  constructor(config:StackBridgeConfig){
     this.config=config;
-    let ob=new Observable<SBConnection>((observer)=>{
-      this.socket=io(this.config.hostname+":"+this.config.port+"/"+this.config.namespace);
-      this.socket.on('connect',()=>{
-        console.log("connection established!!")
-        this.socket.emit('init',{token:this.config.AuthToken},(err,result)=>{
-          if(err){
-            this.socket.disconnect();
-            observer.error(err);
-            observer.complete();
-            console.log(err);
-            return;
-          }else{
-            observer.next(new SBConnection(this.socket,this.token));
-            return
-          }
-        });
-      })
-    }).pipe(share());
-    return ob;
+    this.connector=new StackBridgeConnecter();
+    this.connection=this.connector.connect(this.config.ServerOption)
+      .pipe(multicast(new Subject()));
+    this.config.StoreOptions.forEach(options=>{
+      this.stores[options.name]=new StackBridgeStore(options);
+      this.connection.pipe(
+        switchMap(conn=>
+          this.connector.createRequest()
+          .db(options.dbName)
+          .table(options.name)
+          .run(conn)
+        ),
+        switchMap(channel=>channel.cursor)
+      ).subscribe(data=>this.stores[options.name].loadStore(data))
+      this.connection.pipe(
+        switchMap(conn=>
+          this.connector.createRequest()
+          .db(options.dbName)
+          .table(options.name)
+          .changes()
+          .run(conn)
+        ),
+        switchMap(channel=>channel.cursor)
+      ).subscribe(data=>this.stores[options.name].performChanges(data))
+    });
+    (this.connection as ConnectableObservable<SBConnection>).connect()
   }
-  setToken(token){
-    this.token=token;
-    if(this.conn){
-      this.conn.subscribe(conn=>{
-        conn.setToken(this.token);
-      })
-    }
+  getAllfromStore(storeName:string):Observable<any[]>{
+    return this.stores[storeName].getAll();
   }
-  createRequest():RequestTranslator{
-    return new RequestTranslator();
+  getFromStore(storeName:string,id:string):Observable<any>{
+    return this.stores[storeName].get(id);
   }
+  getFromStoreByIndex(storeName:string,index:string,value:any):Observable<any>{
+    return this.stores[storeName].getByIndex(index,value);
+  }
+  InsertInStore(storeName:string,value:any){
+    //this.
+  }
+  updateInStore(storeName:string,value:any){
 
+  }
 }

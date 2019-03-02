@@ -1,46 +1,41 @@
-import * as io from 'socket.io-client';
-import { Observable } from 'rxjs';
-import { SBConnection } from './SBConnection';
-import { RequestTranslator } from './RequestTranslator';
-import { share } from 'rxjs/operators';
+import { StackBridgeStore } from ".";
+import { StackBridgeConnecter } from ".";
+import { Subject } from "rxjs";
+import { switchMap, multicast } from "rxjs/operators";
 var StackBridge = /** @class */ (function () {
-    function StackBridge() {
-    }
-    StackBridge.prototype.connect = function (config) {
+    function StackBridge(config) {
         var _this = this;
+        this.stores = {};
         this.config = config;
-        var ob = new Observable(function (observer) {
-            _this.socket = io(_this.config.hostname + ":" + _this.config.port + "/" + _this.config.namespace);
-            _this.socket.on('connect', function () {
-                console.log("connection established!!");
-                _this.socket.emit('init', { token: _this.config.AuthToken }, function (err, result) {
-                    if (err) {
-                        _this.socket.disconnect();
-                        observer.error(err);
-                        observer.complete();
-                        console.log(err);
-                        return;
-                    }
-                    else {
-                        observer.next(new SBConnection(_this.socket, _this.token));
-                        return;
-                    }
-                });
-            });
-        }).pipe(share());
-        return ob;
+        this.connector = new StackBridgeConnecter();
+        this.connection = this.connector.connect(this.config.ServerOption)
+            .pipe(multicast(new Subject()));
+        this.config.StoreOptions.forEach(function (options) {
+            _this.stores[options.name] = new StackBridgeStore(options);
+            _this.connection.pipe(switchMap(function (conn) {
+                return _this.connector.createRequest()
+                    .db(options.dbName)
+                    .table(options.name)
+                    .run(conn);
+            }), switchMap(function (channel) { return channel.cursor; })).subscribe(function (data) { return _this.stores[options.name].loadStore(data); });
+            _this.connection.pipe(switchMap(function (conn) {
+                return _this.connector.createRequest()
+                    .db(options.dbName)
+                    .table(options.name)
+                    .changes()
+                    .run(conn);
+            }), switchMap(function (channel) { return channel.cursor; })).subscribe(function (data) { return _this.stores[options.name].performChanges(data); });
+        });
+        this.connection.connect();
+    }
+    StackBridge.prototype.getAllfromStore = function (storeName) {
+        return this.stores[storeName].getAll();
     };
-    StackBridge.prototype.setToken = function (token) {
-        var _this = this;
-        this.token = token;
-        if (this.conn) {
-            this.conn.subscribe(function (conn) {
-                conn.setToken(_this.token);
-            });
-        }
+    StackBridge.prototype.getFromStore = function (storeName, id) {
+        return this.stores[storeName].get(id);
     };
-    StackBridge.prototype.createRequest = function () {
-        return new RequestTranslator();
+    StackBridge.prototype.getFromStoreByIndex = function (storeName, index, value) {
+        return this.stores[storeName].getByIndex(index, value);
     };
     return StackBridge;
 }());
